@@ -1,15 +1,16 @@
-using DefaultNamespace;
 using UnityEngine;
 
-public class ClearCounterInteracted : MonoBehaviour
+public class ClearCounter : MonoBehaviour
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
     [SerializeField] private Transform counterTopPoint;
-
-    private KitchenObject kitchenObject;
+    [SerializeField] private KitchenObjectSO kitchenObjectSO;
+     private KitchenObject kitchenObject;
+    
     public void Interact()
     {
-        Debug.Log("Interact");
+        Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.Prefab, counterTopPoint);
+        kitchenObjectTransform.localPosition = Vector3.zero;
+        
         // if (kitchenObject == null)
         // {
         //     Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab, counterTopPoint);

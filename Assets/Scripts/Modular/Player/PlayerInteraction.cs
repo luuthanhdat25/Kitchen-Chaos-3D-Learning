@@ -1,88 +1,91 @@
 using System;
 using UnityEngine;
 
-namespace DefaultNamespace
+public class PlayerInteraction : MonoBehaviour
 {
-    public class OnSelectedCounterChangedEventArgs : EventArgs
-    {
-        public ClearCounterInteracted SelectedCounterInteracted;
+    [SerializeField] private LayerMask counterLayerMask;
+    private ClearCounter selectedCounter;
+    private Vector3 lastInteractDir;
+    
+    private const float INTERACT_DISTANCE = 2f;
+    private const float RAYCAST_PADDING_BOTTOM = 1f;
+    
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter;
     }
     
-    public class PlayerInteraction : MonoBehaviour
+    private void Start()
     {
-        [SerializeField] private LayerMask counterLayerMask;
-        private ClearCounterInteracted selectedCounterInteracted;
-        private Vector3 lastInteractDir;
-        private const float INTERACT_DISTANCE = 2f;
-        private const float RAYCAST_PADDING_BOTTOM = 1f;
+        SubscribeOnInteract();
+    }
+
+    private void SubscribeOnInteract() => InputManager.Instance.OnInteract += GameInputOnInteract;
+
+    private void GameInputOnInteract(object sender, EventArgs e)
+    {
+        if (selectedCounter != null) 
+            selectedCounter.Interact();
+    }
+
+    private void Update() => HandleInteractions();
+
+    private void HandleInteractions()
+    {
+        Vector3 moveDirection = GetMoveDirection();
         
-        public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
-        
-        private void Start()
+        //Using lastDirection to Interaction
+        if (moveDirection != Vector3.zero) 
+            lastInteractDir = moveDirection;
+        Interaction();
+    }
+
+    private Vector3 GetMoveDirection()
+    {
+        Vector2 inputVector = GetMovementVectorNormalized();
+        return Vector3.forward*inputVector.y + Vector3.right*inputVector.x;
+    }
+
+    private Vector2 GetMovementVectorNormalized() => InputManager.Instance.GetMovementVectorNormalized();
+
+    private void Interaction()
+    {
+        if (IsHasCounter(out RaycastHit raycastHit))
         {
-            SubscribeOnInteract();
-        }
-
-        private void SubscribeOnInteract() => InputManager.Instance.OnInteract += GameInputOnInteract;
-
-        private void GameInputOnInteract(object sender, EventArgs e)
-        {
-            if (selectedCounterInteracted != null) 
-                selectedCounterInteracted.Interact();
-        }
-
-        private void Update() => HandleInteractions();
-
-        private void HandleInteractions()
-        {
-            Vector2 inputVector = GetMovementVectorNormalized();
-            Vector3 moveDirection = new Vector3(inputVector.x, 0, inputVector.y);
-            //If player stop still can dectect the Counter
-            if (moveDirection != Vector3.zero) lastInteractDir = moveDirection;
-            
-            Interaction();
-        }
-
-        private void Interaction()
-        {
-            if (IsHasCounter(out var raycastHit))
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounterInteracted))
             {
-                if (raycastHit.transform.TryGetComponent(out ClearCounterInteracted clearCounterInteracted))
-                {
-                    clearCounterInteracted.Interact();
-                    //if (clearCounterInteracted != selectedCounterInteracted) SetSelectedCounter(clearCounterInteracted);
-                }
-                //else SetSelectedCounter(null);
+                if (clearCounterInteracted != selectedCounter) 
+                    SetSelectedCounter(clearCounterInteracted);
             }
-            //else SetSelectedCounter(null);
+            else SetSelectedCounter(null);
         }
+        else SetSelectedCounter(null);
+    }
 
-        private bool IsHasCounter(out RaycastHit raycastHit)
-        {
-            return Physics.Raycast(OriginRayCast(), 
-                            lastInteractDir, 
-                                   out raycastHit, 
-                                   INTERACT_DISTANCE,
-                                counterLayerMask);
-        }
+    private bool IsHasCounter(out RaycastHit raycastHit)
+    {
+        return Physics.Raycast(GetOriginRayCast(), 
+                        lastInteractDir, 
+                               out raycastHit, 
+                               INTERACT_DISTANCE,
+                            counterLayerMask);
+    }
 
-        private Vector3 OriginRayCast()
-        {
-            Vector3 origin = transform.parent.position;
-            origin.y += RAYCAST_PADDING_BOTTOM;
-            return origin;
-        }
-        
-        private Vector2 GetMovementVectorNormalized() => InputManager.Instance.GetMovementVectorNormalized();
+    private Vector3 GetOriginRayCast()
+    {
+        Vector3 origin = transform.parent.position;
+        origin.y += RAYCAST_PADDING_BOTTOM;
+        return origin;
+    }
+    
 
-        private void SetSelectedCounter(ClearCounterInteracted clearCounterInteracted)
-        {
-            this.selectedCounterInteracted = clearCounterInteracted;
-        
-            OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
-            {
-                SelectedCounterInteracted = this.selectedCounterInteracted
-            });
-        }
+    private void SetSelectedCounter(ClearCounter clearCounterInteracted)
+    {
+        this.selectedCounter = clearCounterInteracted;
+    
+        OnSelectedCounterChanged?.Invoke(this, 
+                new OnSelectedCounterChangedEventArgs{
+                    selectedCounter = this.selectedCounter 
+                });
     }
 }

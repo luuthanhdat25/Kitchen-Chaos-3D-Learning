@@ -37,6 +37,7 @@ public class RepeatMonoBehaviour : MonoBehaviour
         return null;
     }
     
+    //Find component in all children(all children of children) of this transform 
     protected T FindComponentInChildren<T>() where T : Component
     {
         Queue<Transform> queue = new Queue<Transform>();
@@ -57,5 +58,4 @@ public class RepeatMonoBehaviour : MonoBehaviour
         }
         return null;
     }
-
 }
