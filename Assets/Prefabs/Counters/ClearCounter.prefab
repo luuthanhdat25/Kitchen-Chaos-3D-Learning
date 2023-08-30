@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f203f25e4ae4267bb96918bbf780566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearCounter: {fileID: 2727757969996089652}
+  clearCounter: {fileID: 6634456555995684984}
   visualGameObject: {fileID: 6757887635496783658}
 --- !u!1 &2727757968564211845
 GameObject:
@@ -56,6 +56,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2727757968564211962}
+  - component: {fileID: 6634456555995684984}
   m_Layer: 6
   m_Name: ClearCounter
   m_TagString: Untagged
@@ -81,6 +82,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &6634456555995684984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2727757968564211845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21389dfa2268544e99369a3d9b0667d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  counterTopPoint: {fileID: 4694593015436665464}
+  kitchenObjectSO: {fileID: 11400000, guid: b5167d4bb59928c4f9ab3ecb8ccda4c9, type: 2}
+  secondaryCounter: {fileID: 0}
 --- !u!1 &2727757969995309291
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +139,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2727757969996089654}
-  - component: {fileID: 2727757969996089652}
   - component: {fileID: 2727757969996089653}
   m_Layer: 6
   m_Name: Collision_Interact
@@ -147,21 +162,6 @@ Transform:
   m_Father: {fileID: 2727757968564211962}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2727757969996089652
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2727757969996089649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b21389dfa2268544e99369a3d9b0667d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  counterTopPoint: {fileID: 4694593015436665464}
-  tomatoPrefab: {fileID: 2673980717400915246, guid: 0afc7d350e0cd394ca7cf4229f0c403e,
-    type: 3}
 --- !u!65 &2727757969996089653
 BoxCollider:
   m_ObjectHideFlags: 0

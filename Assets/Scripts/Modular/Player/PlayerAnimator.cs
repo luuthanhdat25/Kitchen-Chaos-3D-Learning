@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerAnimator : RepeatMonoBehaviour
 {
-    private Animator animator;
     [SerializeField] private PlayerController playerController;
+    private Animator animator;
     
     private enum AnimationParameters
     {
@@ -12,7 +12,19 @@ public class PlayerAnimator : RepeatMonoBehaviour
     
     private void Start()
     {
+        GetAnimatorComponent();
+        GetPlayerControllerComponent();
+    }
+
+    private void GetAnimatorComponent()
+    {
+        if (this.animator != null) return;
         animator = GetComponent<Animator>();
+    }
+
+    private void GetPlayerControllerComponent()
+    {
+        if (this.playerController != null) return;
         playerController = FindComponentInParent<PlayerController>();
     }
 
@@ -20,6 +32,7 @@ public class PlayerAnimator : RepeatMonoBehaviour
 
     private void SetAnimations()
     {
-        animator.SetBool(AnimationParameters.IsWalking.ToString(), playerController.PlayerMovement.GetIsWalking());
+        animator.SetBool(AnimationParameters.IsWalking.ToString(), 
+                        playerController.GetPlayerMovement().GetIsWalking());
     }
 }
