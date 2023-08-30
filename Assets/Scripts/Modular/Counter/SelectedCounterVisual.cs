@@ -1,20 +1,21 @@
+using Modular.Counter;
 using UnityEngine;
 
 public class SelectedCounterVisual : RepeatMonoBehaviour
 {
-    [SerializeField] private ClearCounter clearCounter;
+    [SerializeField] private BaseCounter baseCounter;
     [SerializeField] private GameObject visualGameObject;
 
     protected override void LoadComponents()
     {
         base.LoadComponents();
-        LoadClearCounterComponent();
+        LoadBaseCounterComponent();
     }
 
-    private void LoadClearCounterComponent()
+    private void LoadBaseCounterComponent()
     {
-        if(this.clearCounter != null) return;
-        clearCounter = FindComponentInParent<ClearCounter>();
+        if(this.baseCounter != null) return;
+        baseCounter = FindComponentInParent<BaseCounter>();
     }
 
     private void Start() => SubscribeOnSelectedCounterChanged();
@@ -28,7 +29,7 @@ public class SelectedCounterVisual : RepeatMonoBehaviour
     private void OnSelectedCounterChanged(object sender, 
                     PlayerInteraction.OnSelectedCounterChangedEventArgs e)
     {
-        if (e.selectedCounter == clearCounter) 
+        if (e.selectedCounter == baseCounter) 
             ShowVisual(true);
         else 
             ShowVisual(false);

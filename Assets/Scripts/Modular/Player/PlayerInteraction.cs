@@ -1,13 +1,13 @@
+using Modular.KitchenObjects;
 using System;
-using KitchenObjects;
+using Modular.Counter;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 {
     [SerializeField] private LayerMask counterLayerMask;
-    [FormerlySerializedAs("holdingPointTransform")] [SerializeField] private Transform kitchenObjectHoldingPointTransform;
-    private ClearCounter selectedCounter;
+    [SerializeField] private Transform kitchenObjectHoldingPointTransform;
+    private BaseCounter selectedCounter;
     private Vector3 lastInteractDir;
     private KitchenObject kitchenObject;
     
@@ -16,13 +16,10 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
-        public ClearCounter selectedCounter;
+        public BaseCounter selectedCounter;
     }
     
-    private void Start()
-    {
-        SubscribeOnInteract();
-    }
+    private void Start() => SubscribeOnInteract();
 
     private void SubscribeOnInteract() => InputManager.Instance.OnInteract += GameInputOnInteract;
 
@@ -56,10 +53,10 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     {
         if (IsHasCounter(out RaycastHit raycastHit))
         {
-            if (raycastHit.transform.parent.TryGetComponent(out ClearCounter clearCounterInteracted))
+            if (raycastHit.transform.parent.TryGetComponent(out BaseCounter counterInteracted))
             {
-                if (clearCounterInteracted != selectedCounter) 
-                    SetSelectedCounter(clearCounterInteracted);
+                if (counterInteracted != selectedCounter) 
+                    SetSelectedCounter(counterInteracted);
             }
             else SetSelectedCounter(null);
         }
@@ -82,9 +79,9 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
         return origin;
     }
     
-    private void SetSelectedCounter(ClearCounter clearCounterInteracted)
+    private void SetSelectedCounter(BaseCounter counterInteracted)
     {
-        this.selectedCounter = clearCounterInteracted;
+        this.selectedCounter = counterInteracted;
     
         OnSelectedCounterChanged?.Invoke(this, 
                 new OnSelectedCounterChangedEventArgs{

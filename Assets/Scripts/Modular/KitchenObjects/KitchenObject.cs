@@ -1,4 +1,4 @@
-using KitchenObjects;
+using Modular.KitchenObjects;
 using UnityEngine;
 
 public class KitchenObject : MonoBehaviour

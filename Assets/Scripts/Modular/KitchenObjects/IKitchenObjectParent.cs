@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KitchenObjects
+namespace Modular.KitchenObjects
 {
     public interface IKitchenObjectParent
     {

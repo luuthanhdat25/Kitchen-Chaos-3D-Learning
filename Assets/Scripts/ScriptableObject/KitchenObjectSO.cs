@@ -4,11 +4,11 @@ using UnityEngine;
 public class KitchenObjectSO : ScriptableObject
 {
     [SerializeField] private Transform prefab;
-    public Transform Prefab => prefab;
+    public Transform GetPrefab() => prefab;
     
     [SerializeField] private Sprite sprite;
-    public Sprite Sprite => sprite;
+    public Sprite GetSprite() => sprite;
     
     [SerializeField] private string objectName;
-    public string ObjectName => objectName;
+    public string GetObjectName() => objectName;
 }
