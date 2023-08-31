@@ -9,45 +9,49 @@ public class PlayerMovement : MonoBehaviour
     private const float PLAYER_RADIUS = 0.6f;
     private const float PLAYER_HEIGHT = 2f;
 
-    private void FixedUpdate() => HandleMovement();
+    private void FixedUpdate()
+    {
+        HandleMovement();
+        HandleRotation();
+    }
 
     private void HandleMovement()
     {
-        Vector2 inputVector = GetMovementVectorNormalized();
         float moveDistance = moveSpeed * Time.fixedDeltaTime;
-        Vector3 moveDirection = GetMoveDirection(inputVector, moveDistance);
+        Vector3 moveDirection = GetMoveDirection(moveDistance);
+        if (moveDirection != Vector3.zero) 
+            Move(moveDirection, moveDistance);
+        
         isWalking = moveDirection != Vector3.zero;
-
-        if (moveDirection == Vector3.zero) return;
-        Move(moveDirection, moveDistance);
-        RotateFollowMoveDirection(moveDirection);
-        //Debug.DrawRay(transform.parent.position, moveDirection, Color.red, PLAYER_RADIUS);
     }
-
-    private Vector2 GetMovementVectorNormalized() => InputManager.Instance.GetMovementVectorNormalized();
     
-    private Vector3 GetMoveDirection(Vector2 inputVector, float moveDistance)
+    private Vector3 GetMoveDirection(float moveDistance)
     {
-        Vector3 moveDirection = new Vector3(inputVector.x, 0, inputVector.y);
-
-        if (IsHasCapsuleCollision(moveDirection, moveDistance))
+        Vector3 moveDir = GetInputVector3();
+        
+        if (HasCapsuleCollision(moveDir, moveDistance))
         {
-            Vector3 moveDirX = new Vector3(moveDirection.x, 0, 0);
-            if (!IsHasCapsuleCollision(moveDirX, moveDistance)) {
+            Vector3 moveDirX = moveDir; moveDirX.y = 0; moveDirX.z = 0;
+            if  (!HasCapsuleCollision(moveDirX, moveDistance)) 
                 return moveDirX;
-            }
             
-            Vector3 moveDirZ = new Vector3(0, 0, moveDirection.z);
-            if (!IsHasCapsuleCollision(moveDirZ, moveDistance)){
+            Vector3 moveDirZ = moveDir; moveDirX.x = 0; moveDirX.y = 0;
+            if (!HasCapsuleCollision(moveDirZ, moveDistance))
                 return moveDirZ;
-            }
+            
             return Vector3.zero;
         }
         
-        return moveDirection;
+        return moveDir;
     }
     
-    private bool IsHasCapsuleCollision(Vector3 moveDirection, float moveDistance)
+    private Vector3 GetInputVector3()
+    {
+        Vector2 inputVector = InputManager.Instance.GetMovementVectorNormalized();
+        return Vector3.forward * inputVector.y + Vector3.right * inputVector.x;
+    }
+    
+    private bool HasCapsuleCollision(Vector3 moveDirection, float moveDistance)
     {
         return Physics.CapsuleCast(transform.parent.position, 
                                 transform.parent.position + Vector3.up * PLAYER_HEIGHT,
@@ -61,11 +65,12 @@ public class PlayerMovement : MonoBehaviour
         transform.parent.position += moveDirection * moveDistance;
     }
 
-    private void RotateFollowMoveDirection(Vector3 moveDirection)
+    //Rotate follow input direction
+    private void HandleRotation()
     {
         // eulerAngles, LookAt(), forward, up , right
         transform.parent.forward = Vector3.Slerp(transform.parent.forward, 
-                                                moveDirection, 
+                                                GetInputVector3(), 
                                                 Time.fixedDeltaTime * rotateSpeed);
     }
     

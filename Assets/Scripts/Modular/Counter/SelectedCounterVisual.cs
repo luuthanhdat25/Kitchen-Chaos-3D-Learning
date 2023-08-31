@@ -1,4 +1,3 @@
-using Modular.Counter;
 using UnityEngine;
 
 public class SelectedCounterVisual : RepeatMonoBehaviour

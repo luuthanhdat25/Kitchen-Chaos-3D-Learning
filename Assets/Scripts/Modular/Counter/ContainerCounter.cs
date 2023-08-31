@@ -1,5 +1,4 @@
 using System;
-using Modular.Counter;
 using UnityEngine;
 
 namespace KitchenObjects.Counter
@@ -13,8 +12,7 @@ namespace KitchenObjects.Counter
         public override void Interact(PlayerInteraction playerInteraction)
         {
             if (playerInteraction.HasKitchenObject()) return;
-            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.GetPrefab());
-            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(playerInteraction);
+            KitchenObject.SpawnKitchenObject(kitchenObjectSO, playerInteraction);
             OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
         }
     }

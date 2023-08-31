@@ -1,6 +1,5 @@
 using Modular.KitchenObjects;
 using System;
-using Modular.Counter;
 using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
@@ -19,16 +18,26 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
         public BaseCounter selectedCounter;
     }
     
-    private void Start() => SubscribeOnInteract();
+    private void Start() => SubscribeEventInteract();
 
-    private void SubscribeOnInteract() => InputManager.Instance.OnInteract += GameInputOnInteract;
+    private void SubscribeEventInteract()
+    {
+        InputManager.Instance.OnInteractAction += InputManager_OnInteractAction;
+        InputManager.Instance.OnInteractAlternateAction += InputManager_OnInteractAlternateAction;
+    }
 
-    private void GameInputOnInteract(object sender, EventArgs e)
+    private void InputManager_OnInteractAction(object sender, EventArgs e)
     {
         if (selectedCounter != null) 
             selectedCounter.Interact(this);
     }
 
+    private void InputManager_OnInteractAlternateAction(object sender, EventArgs e)
+    {
+        if (selectedCounter != null) 
+            selectedCounter.InteractAlternate(this);
+    }
+    
     private void Update() => HandleInteractions();
 
     private void HandleInteractions()
@@ -43,11 +52,9 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
     private Vector3 GetMoveDirection()
     {
-        Vector2 inputVector = GetMovementVectorNormalized();
+        Vector2 inputVector = InputManager.Instance.GetMovementVectorNormalized();
         return Vector3.forward*inputVector.y + Vector3.right*inputVector.x;
     }
-
-    private Vector2 GetMovementVectorNormalized() => InputManager.Instance.GetMovementVectorNormalized();
 
     private void Interaction()
     {

@@ -6,7 +6,8 @@ public class InputManager : MonoBehaviour
 {
     public static InputManager Instance { get; private set; }
     
-    public event EventHandler OnInteract;
+    public event EventHandler OnInteractAction;
+    public event EventHandler OnInteractAlternateAction;
     
     private PlayerInputActions playerInputActions;
     
@@ -14,7 +15,7 @@ public class InputManager : MonoBehaviour
     {
         CheckingSingleton();
         EnableInputActions();
-        SubscribeInteractPerformed();
+        SubscribeEventPerformed();
     }
 
     private void CheckingSingleton()
@@ -29,14 +30,20 @@ public class InputManager : MonoBehaviour
         playerInputActions.Player.Enable();
     }
     
-    private void SubscribeInteractPerformed()
+    private void SubscribeEventPerformed()
     {
         playerInputActions.Player.Interact.performed += Interact_performed;
+        playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
     }
     
     private void Interact_performed(InputAction.CallbackContext obj)
     {
-        OnInteract?.Invoke(this, EventArgs.Empty);
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
+    
+    private void InteractAlternate_performed(InputAction.CallbackContext obj)
+    {
+        OnInteractAlternateAction?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVectorNormalized()
