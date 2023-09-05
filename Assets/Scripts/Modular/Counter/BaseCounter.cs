@@ -7,6 +7,7 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     protected KitchenObject kitchenObject;
     
     public virtual void Interact(PlayerInteraction playerInteraction) {
+        Debug.LogError("BaseCounter.Interact();");
     }
     
     public virtual void InteractAlternate(PlayerInteraction playerInteraction) {

@@ -1,42 +1,29 @@
-using System;
-using System.Net.NetworkInformation;
+using KitchenObjects.Counter;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Modular.UI
 {
-    public class ProgressBarUI : RepeatMonoBehaviour
+    public class ProgressBarUI : MonoBehaviour
     {
-        [SerializeField] private CuttingCounter cuttingCounter;
+        [SerializeField] private GameObject hasProgressGameObject;
         [SerializeField] private Image barImage;
-
-        protected override void LoadComponents()
-        {
-            base.LoadComponents();
-            LoadCuttingCounterComponent();
-            LoadBarImageComponent();
-        }
-
-        private void LoadCuttingCounterComponent()
-        {
-            if (this.cuttingCounter != null) return;
-            this.cuttingCounter = FindComponentInParent<CuttingCounter>();
-        }
         
-        private void LoadBarImageComponent()
-        {
-            if (this.barImage != null) return;
-            this.barImage = transform.Find("Bar").GetComponent<Image>();
-        }
-
+        private IHasProgess hasProgess;
+        
         private void Start()
         {
-            cuttingCounter.OnProcessChanged += CuttingCounter_OnProcessChanged;
+            hasProgess = hasProgressGameObject.GetComponent<IHasProgess>();
+            if (hasProgess == null)
+                Debug.LogError(
+                    $"GameObject: {hasProgressGameObject.name} doesn't have a component has implements IHasProgess");
+            
+            hasProgess.OnProcessChanged += IHasProgress_OnProcessChanged;
             barImage.fillAmount = 0;
             Hide();
         }
 
-        private void CuttingCounter_OnProcessChanged(object sender, CuttingCounter.OnProgressChangedEventArgs e)
+        private void IHasProgress_OnProcessChanged(object sender, IHasProgess.OnProgressChangedEventArgs e)
         {
             barImage.fillAmount = e.progressNormalized;
             
