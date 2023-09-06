@@ -1,9 +1,7 @@
-using UnityEngine;
+using Modular.KitchenObjects;
 
 public class ClearCounter : BaseCounter
 {
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    
     public override void Interact(PlayerInteraction playerInteraction)
     {
         if (!HasKitchenObject())
@@ -15,7 +13,28 @@ public class ClearCounter : BaseCounter
         }
         else
         {
-            if (!playerInteraction.HasKitchenObject())
+            if (playerInteraction.HasKitchenObject())
+            {
+                if (playerInteraction.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO())) 
+                    {
+                        GetKitchenObject().DestroyItSelf();
+                    }
+                }
+                else
+                {
+                    if (GetKitchenObject().TryGetPlate(out  plateKitchenObject))
+                    {
+                        if(plateKitchenObject.TryAddIngredient(
+                               playerInteraction.GetKitchenObject().GetKitchenObjectSO()))
+                        {
+                            playerInteraction.GetKitchenObject().DestroyItSelf();
+                        }
+                    }
+                }
+            }
+            else 
             {
                 GetKitchenObject().SetKitchenObjectParent(playerInteraction);
             }

@@ -17,7 +17,7 @@ public class KitchenObject : MonoBehaviour
 
         if (kitchenObjectParent.HasKitchenObject())
         {
-            Debug.Log("New kitchen object parent is " + kitchenObjectParent + "already has kitchen objects");
+            Debug.LogError("New kitchen object parent is " + kitchenObjectParent + "already has kitchen objects");
         }
         
         kitchenObjectParent.SetKitchenObject(this);
@@ -29,6 +29,17 @@ public class KitchenObject : MonoBehaviour
     {
         kitchenObjectParent.ClearKitchenObjects();
         Destroy(gameObject);
+    }
+
+    public bool TryGetPlate(out PlateKitchenObject plateKitchenObject)
+    {
+        if (this is PlateKitchenObject) {
+            plateKitchenObject = this as PlateKitchenObject;
+            return true;
+        }
+        
+        plateKitchenObject = null;
+        return false;
     }
 
     public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSo, IKitchenObjectParent kitchenObjectParent)

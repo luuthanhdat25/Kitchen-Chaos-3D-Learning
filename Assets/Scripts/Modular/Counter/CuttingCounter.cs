@@ -1,5 +1,6 @@
 using System;
 using KitchenObjects.Counter;
+using Modular.KitchenObjects;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgess
@@ -28,7 +29,18 @@ public class CuttingCounter : BaseCounter, IHasProgess
                 }
             }
         }else{
-            if (!playerInteraction.HasKitchenObject()) {
+            if (playerInteraction.HasKitchenObject()) 
+            {
+                if (playerInteraction.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                    {
+                        GetKitchenObject().DestroyItSelf();
+                    }
+                }    
+            }
+            else
+            {
                 GetKitchenObject().SetKitchenObjectParent(playerInteraction);
             }
         }

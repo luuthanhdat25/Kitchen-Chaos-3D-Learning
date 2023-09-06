@@ -1,4 +1,5 @@
 using System;
+using Modular.KitchenObjects;
 using UnityEngine;
 
 namespace KitchenObjects.Counter
@@ -106,7 +107,23 @@ namespace KitchenObjects.Counter
                     }
                 }
             }else{
-                if (!playerInteraction.HasKitchenObject()) {
+                if (playerInteraction.HasKitchenObject())
+                {
+                    if (playerInteraction.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                    {
+                        if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                        {
+                            GetKitchenObject().DestroyItSelf();
+                            ChangeStateAndInvokeOnStateChanged(State.Idle);
+                            OnProcessChanged?.Invoke(this, new IHasProgess.OnProgressChangedEventArgs
+                            {
+                                progressNormalized = 0
+                            });
+                        }
+                    }
+                }
+                else 
+                {
                     GetKitchenObject().SetKitchenObjectParent(playerInteraction);
                     ChangeStateAndInvokeOnStateChanged(State.Idle);
                     OnProcessChanged?.Invoke(this, new IHasProgess.OnProgressChangedEventArgs
