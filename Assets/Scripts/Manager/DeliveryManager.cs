@@ -7,6 +7,9 @@ using UnityEngine;
 public class DeliveryManager : MonoBehaviour
 {
     public static DeliveryManager Instance { get; private set; }
+
+    public event EventHandler OnRecipeSpawned;
+    public event EventHandler OnRecipeCompleted;
     
     [SerializeField] private RecipeListSO recipeListSo;
     [SerializeField] private List<RecipeSO> waitingRecipeSOList = new List<RecipeSO>();
@@ -40,8 +43,8 @@ public class DeliveryManager : MonoBehaviour
             {
                 RecipeSO waitingRecipeSo =
                     recipeListSo.GetRecipeList()[UnityEngine.Random.Range(0, recipeListSo.GetRecipeList().Count)];
-                Debug.Log(waitingRecipeSo.GetNameRecipe());
                 waitingRecipeSOList.Add(waitingRecipeSo);
+                OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -55,7 +58,8 @@ public class DeliveryManager : MonoBehaviour
             if (AreRecipeEqual(waitingRecipeSo.GetKitchenObjectList(), 
                                 plateKitchenObject.GetKitchenObjectSOList()))
             {
-                Debug.Log("Match");
+                waitingRecipeSOList.Remove(waitingRecipeSo);
+                OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
                 return;
             }
         }
@@ -70,4 +74,6 @@ public class DeliveryManager : MonoBehaviour
         HashSet<KitchenObjectSO> set1 = new HashSet<KitchenObjectSO>(recipe1);
         return recipe2.All(set1.Contains);
     }
+
+    public List<RecipeSO> GetWaitingRecipeSOList() => this.waitingRecipeSOList;
 }
