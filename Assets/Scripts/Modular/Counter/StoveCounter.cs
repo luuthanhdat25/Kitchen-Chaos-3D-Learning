@@ -80,7 +80,6 @@ namespace KitchenObjects.Counter
                 case State.Burned:
                     break;
             }
-            Debug.Log(state);
         }
 
         private void ChangeStateAndInvokeOnStateChanged(State newState)

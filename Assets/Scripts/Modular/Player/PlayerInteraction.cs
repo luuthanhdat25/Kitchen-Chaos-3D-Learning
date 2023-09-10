@@ -13,6 +13,7 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     private const float INTERACT_DISTANCE = 2f;
     private const float RAYCAST_PADDING_BOTTOM = 1f;
     
+    public event EventHandler OnPickedSomething;
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
@@ -28,12 +29,14 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
 
     private void InputManager_OnInteractAction(object sender, EventArgs e)
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         if (selectedCounter != null) 
             selectedCounter.Interact(this);
     }
 
     private void InputManager_OnInteractAlternateAction(object sender, EventArgs e)
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         if (selectedCounter != null) 
             selectedCounter.InteractAlternate(this);
     }
@@ -101,6 +104,8 @@ public class PlayerInteraction : MonoBehaviour, IKitchenObjectParent
     public void SetKitchenObject(KitchenObject kitchenObject)
     {
         this.kitchenObject = kitchenObject;
+        if (kitchenObject != null)
+            OnPickedSomething?.Invoke(this, EventArgs.Empty);
     }
 
     public KitchenObject GetKitchenObject() => this.kitchenObject;
