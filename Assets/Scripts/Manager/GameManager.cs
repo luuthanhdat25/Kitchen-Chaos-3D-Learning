@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     private State state;
     private float waitingToStartTimer = 1f;
     private float coundownToStartTimer = 3f;
+    private float coundownToGamePlayTimer;
+    [SerializeField] private float coundownToGamePlayTimerMax = 30f;
 
     private void Awake()
     {
@@ -26,6 +28,8 @@ public class GameManager : MonoBehaviour
         
         state = State.WaitingToStart;
     }
+
+    private void Start() => coundownToGamePlayTimer = coundownToGamePlayTimerMax;
 
     private void Update()
     {
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
                     OnStateChanged?.Invoke(this, EventArgs.Empty);
                 }
                 break;
+            
             case State.CountdownToStart:
                 coundownToStartTimer -= Time.deltaTime;
                 if (coundownToStartTimer <= 0)
@@ -47,8 +52,16 @@ public class GameManager : MonoBehaviour
                     OnStateChanged?.Invoke(this, EventArgs.Empty);
                 }
                 break;
+            
             case State.GamePlaying:
+                coundownToGamePlayTimer -= Time.deltaTime;
+                if (coundownToGamePlayTimer <= 0)
+                {
+                    state = State.GameOver;
+                    OnStateChanged?.Invoke(this, EventArgs.Empty);
+                }
                 break;
+            
             case State.GameOver:
                 break;
         }
@@ -57,7 +70,11 @@ public class GameManager : MonoBehaviour
     public bool IsGamePlaying() => state == State.GamePlaying;
     
     public bool IsCountDownToStartIsActive() => state == State.CountdownToStart;
+    
+    public bool IsGameOver() => state == State.GameOver;
 
     public float GetCoundownToStartTimer() => coundownToStartTimer;
+    
+    public float GetCoundownToGamePlayTimerNormalized() => 1 - (coundownToGamePlayTimer / coundownToGamePlayTimerMax);
 }
 
