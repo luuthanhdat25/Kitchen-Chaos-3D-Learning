@@ -24,7 +24,7 @@ public class CuttingCounter : BaseCounter, IHasProgess
 
                     CuttingRecipeSO cuttingRecipeSo = GetCuttingRecipeSO(GetKitchenObject().GetKitchenObjectSO());
                     OnProcessChanged?.Invoke(this,
-                        new IHasProgess.OnProgressChangedEventArgs()
+                        new IHasProgess.OnProgressChangedEventArgs
                         {
                             progressNormalized = (float)cuttingProcess / cuttingRecipeSo.GetCuttingProgressMax()
                         });
