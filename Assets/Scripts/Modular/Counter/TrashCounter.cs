@@ -7,6 +7,8 @@ namespace KitchenObjects.Counter
     {
         public static event EventHandler OnAnyObjectTrashed;
         
+        new public static void ResetStaticData() => OnAnyObjectTrashed = null;
+
         public override void Interact(PlayerInteraction playerInteraction)
         {
             if (playerInteraction.HasKitchenObject())
