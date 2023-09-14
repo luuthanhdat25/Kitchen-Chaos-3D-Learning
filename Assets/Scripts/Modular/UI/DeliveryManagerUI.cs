@@ -22,16 +22,11 @@ namespace Modular.UI
             DeliveryManager.Instance.OnRecipeCompleted += DeliveryManager_OnRecipeCompleted;
         }
 
-        private void DeliveryManager_OnRecipeSpawned(object sender, EventArgs e)
-        {                
-            Debug.Log("Recipe");
-            UpdateVisual();
-        }
+        private void DeliveryManager_OnRecipeSpawned(object sender, EventArgs e) 
+            => UpdateVisual();
 
-        private void DeliveryManager_OnRecipeCompleted(object sender, EventArgs e)
-        {
-            UpdateVisual();
-        }
+        private void DeliveryManager_OnRecipeCompleted(object sender, EventArgs e) 
+            => UpdateVisual();
 
         private void UpdateVisual()
         {

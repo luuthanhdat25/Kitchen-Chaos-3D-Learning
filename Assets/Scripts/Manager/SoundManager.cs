@@ -10,11 +10,16 @@ namespace Manager
         public static SoundManager Instance { get; private set; }
         
         [SerializeField] private AudioClipRefsSO audioClipRefsSO;
+        private float volume = 1f;
+
+        private const string PLAYER_PREFS_SOUND_EFFECTS_VOLUME = "SoundEffectsVolume";
 
         private void Awake()
         {
             if (Instance != null) Debug.LogError("SoundManger is already initialized");
             Instance = this;
+
+            volume = PlayerPrefs.GetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, 1f);
         }
 
         private void Start()
@@ -67,14 +72,25 @@ namespace Manager
             PlaySound(audioClipArray[Random.Range(0, audioClipArray.Length)], point, volume);
         }
         
-        private void PlaySound(AudioClip audioClip, Vector3 point, float volume = 1f)
+        private void PlaySound(AudioClip audioClip, Vector3 point, float volumeMultiplier = 1f)
         {
-            AudioSource.PlayClipAtPoint(audioClip, point, volume);
+            AudioSource.PlayClipAtPoint(audioClip, point, volumeMultiplier * volume);
         }
 
         public void PlayFootstepSound(Vector3 position, float volume)
         {
             PlaySound(audioClipRefsSO.footstep, position, volume);
         }
+
+        public void ChangeVolume()
+        {
+            volume += 0.1f;
+            if (volume > 1) volume = 0;
+            
+            PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECTS_VOLUME, volume);
+            PlayerPrefs.Save();
+        }
+        
+        public float GetVolume() => this.volume;
     }
 }

@@ -9,6 +9,7 @@ namespace Modular.UI
     {
         [SerializeField] private Button continueButton;
         [SerializeField] private Button mainMenuButton;
+        [SerializeField] private Button optionsButton;
 
         private void Awake()
         {
@@ -19,6 +20,10 @@ namespace Modular.UI
             mainMenuButton.onClick.AddListener(() =>
             {
                 Loader.Load(Loader.Scene.MainMenuScene);
+            });
+            optionsButton.onClick.AddListener(() =>
+            {
+                OptionUI.Instance.Show(true);
             });
         }
 
