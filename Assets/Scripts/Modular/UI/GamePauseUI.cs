@@ -23,7 +23,7 @@ namespace Modular.UI
             });
             optionsButton.onClick.AddListener(() =>
             {
-                OptionUI.Instance.Show(true);
+                OptionUI.Instance.ShowOptionUI(true);
             });
         }
 

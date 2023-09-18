@@ -15,6 +15,22 @@ namespace Modular.UI
         [SerializeField] private Button musicButton;
         [SerializeField] private TextMeshProUGUI musicVolumeText;
         [SerializeField] private Button closeButton;
+        [SerializeField] private Button moveUpButton;
+        [SerializeField] private Button moveDownButton;
+        [SerializeField] private Button moveLeftButton;
+        [SerializeField] private Button moveRightButton;
+        [SerializeField] private Button interactButton;
+        [SerializeField] private Button interactAltButton;
+        [SerializeField] private Button pauseGameButton;
+        [SerializeField] private TextMeshProUGUI moveUpText;
+        [SerializeField] private TextMeshProUGUI moveDownText;
+        [SerializeField] private TextMeshProUGUI moveLeftText;
+        [SerializeField] private TextMeshProUGUI moveRightText;
+        [SerializeField] private TextMeshProUGUI interactText;
+        [SerializeField] private TextMeshProUGUI interactAltText;
+        [SerializeField] private TextMeshProUGUI pauseGameText;
+        [SerializeField] private Transform pressToRebindKeyTransform;
+
 
         private void Awake()
         {
@@ -33,26 +49,57 @@ namespace Modular.UI
             });
             closeButton.onClick.AddListener(() =>
             {
-                Show(false);
+                ShowOptionUI(false);
             });
+            
+            moveUpButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Move_Up);});
+            moveDownButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Move_Down);});
+            moveLeftButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Move_Left);});
+            moveRightButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Move_Right);});
+            interactButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Interact);});
+            interactAltButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.InteractAlternate);});
+            pauseGameButton.onClick.AddListener(() => { RebindBinding(InputManager.Binding.Pause);});
         }
 
         private void UpdateVisual()
         {
             soundEffectVolumeText.text = $"Sound Effect: {Mathf.Round(SoundManager.Instance.GetVolume()*10)}";
             musicVolumeText.text = $"Music: {Mathf.Round(MusicManager.Instance.GetVolume()*10)}";
+
+            moveUpText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Move_Up);
+            moveDownText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Move_Down);
+            moveLeftText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Move_Left);
+            moveRightText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Move_Right);
+            interactText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Interact);
+            interactAltText.text = InputManager.Instance.GetBidingText(InputManager.Binding.InteractAlternate);
+            pauseGameText.text = InputManager.Instance.GetBidingText(InputManager.Binding.Pause);
         }
         
         private void Start()
         {
             GameManager.Instance.OnGameUnpaused += GameManager_OnGameUnpaused;
             UpdateVisual();
-            Show(false);
+            ShowOptionUI(false);
+            HidePressToRebindKey();
         }
 
         private void GameManager_OnGameUnpaused(object sender, EventArgs e) 
-            => Show(false);
+            => ShowOptionUI(false);
 
-        public void Show(bool isShow) => gameObject.SetActive(isShow);
+        public void ShowOptionUI(bool isShow) => gameObject.SetActive(isShow);
+        
+        public void ShowPressToRebindKey() => pressToRebindKeyTransform.gameObject.SetActive(true);
+       
+        public void HidePressToRebindKey() => pressToRebindKeyTransform.gameObject.SetActive(false);
+
+        private void RebindBinding(InputManager.Binding binding)
+        {
+            ShowPressToRebindKey();
+            InputManager.Instance.RebindBinding(binding,() =>
+            {
+                HidePressToRebindKey();
+                UpdateVisual();
+            });
+        }
     }
 }
